@@ -338,7 +338,7 @@
     // Load agents from backend (Google Apps Script)
     async function loadAgents() {
         try {
-            const SCRIPT_URL = "{{SCRIPT_DEPLOYMENT_URL}}"; // Replace after deployment
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdh1DLqbyhHAZNjV5O_0VwW5njnZgQ7P6jczsqSVjjXrHmkjLC3bqsFKS5fmwsA58/exec";
             const fetchUrl = `${SCRIPT_URL}?action=agents`;
             const res = await fetch(fetchUrl);
             const agents = await res.json();
