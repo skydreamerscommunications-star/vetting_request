@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vetting Request | Pre-Transfer Declaration</title>
+    <title>Vetting Request | Lead Qualification Engine</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -19,9 +19,9 @@
             background-color: #f8fafc;
         }
         
-        /* Smooth transitions for icon colors */
         input, select, textarea {
             transition: all 0.15s ease;
+            font-size: 15px;
         }
         
         input:focus, select:focus, textarea:focus {
@@ -34,7 +34,6 @@
             transition: color 0.15s ease;
         }
         
-        /* Campaign toggle buttons */
         .campaign-toggle {
             padding: 10px 28px;
             font-size: 15px;
@@ -58,7 +57,25 @@
             border-color: #cbd5e1;
         }
         
-        /* Toast notification */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .tooltip-icon {
+            cursor: help;
+            color: #94a3b8;
+            transition: color 0.15s ease;
+        }
+        
+        .tooltip-icon:hover {
+            color: #3b82f6;
+        }
+        
         .toast {
             position: fixed;
             bottom: 24px;
@@ -81,7 +98,6 @@
             color: white;
         }
         
-        /* Loader animation */
         .loader {
             display: inline-block;
             width: 18px;
@@ -97,6 +113,35 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Custom tooltip styling */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+        
+        [data-tooltip]:before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 12px;
+            background: #1e293b;
+            color: white;
+            font-size: 12px;
+            font-weight: 400;
+            white-space: nowrap;
+            border-radius: 6px;
+            display: none;
+            z-index: 10;
+            margin-bottom: 8px;
+            pointer-events: none;
+        }
+        
+        [data-tooltip]:hover:before {
+            display: block;
+        }
     </style>
 </head>
 <body class="min-h-screen p-6">
@@ -104,7 +149,7 @@
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-slate-800">Lead Information</h1>
-            <p class="text-sm text-slate-500 mt-2">Pre-transfer Declaration · QA Layer</p>
+            <p class="text-sm text-slate-500 mt-2">Pre-transfer Declaration · Qualification Engine</p>
         </div>
         
         <!-- STEP 1: Lead Information Container -->
@@ -172,10 +217,10 @@
             </div>
         </div>
         
-        <!-- STEP 2: Vetting Form Container (hidden initially) -->
+        <!-- STEP 2: Qualification Engine Container (hidden initially) -->
         <div id="step2Container" class="bg-white rounded-2xl border border-slate-200 p-6 hidden">
             <!-- Lead Summary -->
-            <div id="leadSummary" class="bg-slate-50 rounded-xl p-4 mb-6 border border-slate-200">
+            <div class="bg-slate-50 rounded-xl p-4 mb-6 border border-slate-200">
                 <div class="flex items-center gap-2 text-slate-600">
                     <i class="fas fa-user-check text-blue-500"></i>
                     <span id="summaryText" class="font-medium">Loading...</span>
@@ -236,6 +281,7 @@
                             <i id="autoLicenseIcon" class="fas fa-id-card text-slate-400 transition-icon"></i>
                         </div>
                         <select id="autoLicense" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select License Status *</option>
                             <option>Valid</option><option>Suspended</option><option>None</option>
                         </select>
                     </div>
@@ -244,6 +290,7 @@
                             <i id="autoViolationsIcon" class="fas fa-exclamation-triangle text-slate-400 transition-icon"></i>
                         </div>
                         <select id="autoViolations" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Violations *</option>
                             <option>Clean</option><option>Minor</option><option>Major</option>
                         </select>
                     </div>
@@ -252,8 +299,12 @@
             
             <!-- MVA Form (hidden initially) -->
             <div id="mvaForm" class="hidden">
-                <!-- Accident Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <!-- SECTION 1: Accident Details -->
+                <div class="section-header">
+                    <i class="fas fa-car-crash text-blue-500 text-lg"></i>
+                    <span class="font-semibold text-slate-700">Accident Details</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                     <div class="relative">
                         <div class="absolute left-3 top-3.5">
                             <i id="accidentDateIcon" class="fas fa-calendar-alt text-slate-400 transition-icon"></i>
@@ -272,111 +323,136 @@
                         <div class="absolute left-3 top-3.5">
                             <i id="scenarioIcon" class="fas fa-file-alt text-slate-400 transition-icon"></i>
                         </div>
-                        <input type="text" id="scenario" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Scenario *">
+                        <input type="text" id="scenario" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Scenario Description *">
                     </div>
                 </div>
                 
-                <!-- Two Column Layout -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                    <!-- Left Column -->
-                    <div class="space-y-5">
-                        <div class="relative">
-                            <div class="absolute left-3 top-3.5">
-                                <i id="policeReportIcon" class="fas fa-file-police text-slate-400 transition-icon"></i>
-                            </div>
-                            <select id="policeReport" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                                <option>Yes, and I have the report</option>
-                                <option>Yes, but I don't have a copy</option>
-                                <option>Police were called but didn't arrive</option>
-                                <option>Police were not called</option>
-                                <option>Unsure / don't remember</option>
-                            </select>
+                <!-- SECTION 2: Liability Assessment -->
+                <div class="section-header">
+                    <i class="fas fa-gavel text-blue-500 text-lg"></i>
+                    <span class="font-semibold text-slate-700">Liability Assessment</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="sourceOfFaultIcon" class="fas fa-database text-slate-400 transition-icon"></i>
                         </div>
-                        <div class="relative">
-                            <div class="absolute left-3 top-3.5">
-                                <i id="faultDeclaredIcon" class="fas fa-gavel text-slate-400 transition-icon"></i>
-                            </div>
-                            <select id="faultDeclared" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                                <option>Yes, Police declared other at fault</option>
-                                <option>Yes, Insurance declared other at fault</option>
-                                <option>No, declared me at fault</option>
-                                <option>Both parties contributed</option>
-                                <option>Undetermined / Pending</option>
-                            </select>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute left-3 top-3.5">
-                                <i id="atFaultIcon" class="fas fa-users text-slate-400 transition-icon"></i>
-                            </div>
-                            <select id="atFaultParty" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                                <option>The other driver was completely at fault</option>
-                                <option>Client was at fault</option>
-                                <option>Both drivers were partially at fault</option>
-                                <option>Unsure / don't know</option>
-                            </select>
-                        </div>
+                        <select id="sourceOfFault" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Source of Fault *</option>
+                            <option>Police report available</option>
+                            <option>Insurance determination</option>
+                            <option>Customer statement only</option>
+                            <option>No information available</option>
+                        </select>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="What is the source of fault determination?"></i>
                     </div>
-                    
-                    <!-- Right Column -->
-                    <div class="space-y-5">
-                        <div class="relative">
-                            <div class="absolute left-3 top-3.5">
-                                <i id="injuryIcon" class="fas fa-notes-medical text-slate-400 transition-icon"></i>
-                            </div>
-                            <textarea id="injuryNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Nature of Injuries"></textarea>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="liabilityIcon" class="fas fa-balance-scale text-slate-400 transition-icon"></i>
                         </div>
-                        <div class="relative">
-                            <div class="absolute left-3 top-3.5">
-                                <i id="treatmentIcon" class="fas fa-hospital-user text-slate-400 transition-icon"></i>
-                            </div>
-                            <textarea id="treatmentNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Type of Treatment"></textarea>
+                        <select id="liabilityAssessment" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Liability Assessment *</option>
+                            <option>Other party at fault</option>
+                            <option>Shared fault</option>
+                            <option>Client at fault</option>
+                            <option>Unknown</option>
+                        </select>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Based on available information, who is at fault?"></i>
+                    </div>
+                    <div class="md:col-span-2 relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="situationIcon" class="fas fa-car-crash text-slate-400 transition-icon"></i>
                         </div>
-                        <div class="relative">
-                            <div class="absolute left-3 top-3.5">
-                                <i id="impactIcon" class="fas fa-chart-line text-slate-400 transition-icon"></i>
-                            </div>
-                            <select id="impactLife" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                                <option>Yes, unable to work</option>
-                                <option>Yes, limited work / activities</option>
-                                <option>No significant impact</option>
-                            </select>
-                        </div>
+                        <select id="accidentSituation" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Accident Situation *</option>
+                            <option>Information exchanged</option>
+                            <option>No information exchanged</option>
+                            <option>Hit and run</option>
+                            <option>Customer unconscious</option>
+                            <option>Police not present</option>
+                            <option>Unsure</option>
+                        </select>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="What happened after the accident?"></i>
                     </div>
                 </div>
                 
-                <!-- Representation -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- SECTION 3: Injury & Impact -->
+                <div class="section-header">
+                    <i class="fas fa-notes-medical text-blue-500 text-lg"></i>
+                    <span class="font-semibold text-slate-700">Injury & Impact</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="injuryIcon" class="fas fa-notes-medical text-slate-400 transition-icon"></i>
+                        </div>
+                        <textarea id="injuryNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Nature of Injuries"></textarea>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Describe all injuries sustained (whiplash, back pain, broken bones, etc.)"></i>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="treatmentIcon" class="fas fa-hospital-user text-slate-400 transition-icon"></i>
+                        </div>
+                        <textarea id="treatmentNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Type of Treatment"></textarea>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="What treatment has been received? (ER, physical therapy, chiropractor, etc.)"></i>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="impactIcon" class="fas fa-chart-line text-slate-400 transition-icon"></i>
+                        </div>
+                        <select id="impactLife" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Impact on Daily Life *</option>
+                            <option>Yes, unable to work</option>
+                            <option>Yes, limited work / activities</option>
+                            <option>No significant impact</option>
+                        </select>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Are injuries affecting daily life or ability to work?"></i>
+                    </div>
+                </div>
+                
+                <!-- SECTION 4: Claim Status -->
+                <div class="section-header">
+                    <i class="fas fa-file-signature text-blue-500 text-lg"></i>
+                    <span class="font-semibold text-slate-700">Claim Status</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
                     <div class="relative">
                         <div class="absolute left-3 top-3.5">
                             <i id="attorneyIcon" class="fas fa-gavel text-slate-400 transition-icon"></i>
                         </div>
                         <select id="attorneyStatus" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Attorney Status *</option>
                             <option>No, I do not have an attorney</option>
                             <option>Yes, I have signed paperwork with an attorney</option>
                             <option>Yes, I have spoken to an attorney but did not sign</option>
                             <option>I am in the process of hiring an attorney</option>
                         </select>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Has the customer hired an attorney?"></i>
                     </div>
                     <div class="relative">
                         <div class="absolute left-3 top-3.5">
                             <i id="settlementIcon" class="fas fa-hand-holding-usd text-slate-400 transition-icon"></i>
                         </div>
                         <select id="settlementStatus" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Settlement Status *</option>
                             <option>No, I haven't received any payment</option>
                             <option>Yes, for vehicle/property damage only</option>
                             <option>Yes, for medical bills or injury compensation</option>
                             <option>Yes, but only partial payments</option>
                         </select>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Has any settlement been paid?"></i>
                     </div>
                     <div class="relative">
                         <div class="absolute left-3 top-3.5">
                             <i id="releaseIcon" class="fas fa-file-signature text-slate-400 transition-icon"></i>
                         </div>
                         <select id="releaseSigned" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Release Status *</option>
                             <option>No</option>
                             <option>Yes</option>
                             <option>Not sure</option>
                         </select>
+                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Did the customer sign a release of liability?"></i>
                     </div>
                 </div>
             </div>
@@ -394,7 +470,7 @@
                         <i id="agentIcon" class="fas fa-user-tie text-slate-400 transition-icon"></i>
                     </div>
                     <select id="agentSelect" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                        <option value="">Loading agents...</option>
+                        <option value="">Select Agent *</option>
                     </select>
                 </div>
                 <button id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all">
@@ -450,7 +526,7 @@
             const icon = document.getElementById(iconId);
             if (input && icon) {
                 const value = input.value?.trim();
-                if (value && value !== '') {
+                if (value && value !== '' && value !== 'Select option *') {
                     icon.classList.remove('text-slate-400');
                     icon.classList.add('text-blue-500');
                 } else {
@@ -478,9 +554,9 @@
                 { input: 'accidentDate', icon: 'accidentDateIcon' },
                 { input: 'accidentState', icon: 'accidentStateIcon' },
                 { input: 'scenario', icon: 'scenarioIcon' },
-                { input: 'policeReport', icon: 'policeReportIcon' },
-                { input: 'faultDeclared', icon: 'faultDeclaredIcon' },
-                { input: 'atFaultParty', icon: 'atFaultIcon' },
+                { input: 'sourceOfFault', icon: 'sourceOfFaultIcon' },
+                { input: 'liabilityAssessment', icon: 'liabilityIcon' },
+                { input: 'accidentSituation', icon: 'situationIcon' },
                 { input: 'injuryNotes', icon: 'injuryIcon' },
                 { input: 'treatmentNotes', icon: 'treatmentIcon' },
                 { input: 'impactLife', icon: 'impactIcon' },
@@ -593,11 +669,11 @@
             const accidentDate = document.getElementById('accidentDate').value;
             const accidentState = document.getElementById('accidentState').value;
             const scenario = document.getElementById('scenario').value.trim();
-            const policeReport = document.getElementById('policeReport').value;
-            const faultDeclared = document.getElementById('faultDeclared').value;
-            const atFaultParty = document.getElementById('atFaultParty').value;
+            const sourceOfFault = document.getElementById('sourceOfFault').value;
+            const liabilityAssessment = document.getElementById('liabilityAssessment').value;
+            const accidentSituation = document.getElementById('accidentSituation').value;
             const impactLife = document.getElementById('impactLife').value;
-            return accidentDate && accidentState && scenario && policeReport && faultDeclared && atFaultParty && impactLife;
+            return accidentDate && accidentState && scenario && sourceOfFault && liabilityAssessment && accidentSituation && impactLife;
         }
         
         // Gather Data
@@ -628,9 +704,9 @@
                 accidentDate: document.getElementById('accidentDate').value,
                 accidentState: document.getElementById('accidentState').value,
                 scenario: document.getElementById('scenario').value.trim(),
-                policeReport: document.getElementById('policeReport').value,
-                faultDeclared: document.getElementById('faultDeclared').value,
-                atFaultParty: document.getElementById('atFaultParty').value,
+                sourceOfFault: document.getElementById('sourceOfFault').value,
+                liabilityAssessment: document.getElementById('liabilityAssessment').value,
+                accidentSituation: document.getElementById('accidentSituation').value,
                 injuryNotes: document.getElementById('injuryNotes').value,
                 treatmentNotes: document.getElementById('treatmentNotes').value,
                 impactLife: document.getElementById('impactLife').value,
@@ -646,8 +722,9 @@
             
             const leadData = gatherLeadData();
             const agentId = document.getElementById('agentSelect').value;
+            const agentName = document.getElementById('agentSelect').options[document.getElementById('agentSelect').selectedIndex]?.text;
             
-            if (!agentId) {
+            if (!agentId || !agentName) {
                 showToast('Please select an agent', false);
                 return;
             }
@@ -658,7 +735,7 @@
             }
             
             if (currentCampaign === 'MVA' && !validateMvaForm()) {
-                showToast('Please complete all accident and fault determination fields', false);
+                showToast('Please complete all accident and liability fields', false);
                 return;
             }
             
@@ -677,6 +754,7 @@
                 campaign: currentCampaign,
                 ...leadData,
                 agentId: agentId,
+                agentName: agentName,
                 qualification: currentCampaign === 'Auto' ? gatherAutoData() : gatherMvaData()
             };
             
@@ -701,25 +779,27 @@
                     document.getElementById('trustedFormUrl').value = '';
                     document.getElementById('consentCheck').checked = false;
                     
+                    // Reset auto form
                     document.getElementById('autoMake').value = '';
                     document.getElementById('autoModel').value = '';
                     document.getElementById('autoYear').value = '';
                     document.getElementById('autoProvider').value = '';
-                    document.getElementById('autoLicense').value = 'Valid';
-                    document.getElementById('autoViolations').value = 'Clean';
+                    document.getElementById('autoLicense').value = '';
+                    document.getElementById('autoViolations').value = '';
                     
+                    // Reset MVA form
                     document.getElementById('accidentDate').value = '';
                     document.getElementById('accidentState').value = '';
                     document.getElementById('scenario').value = '';
-                    document.getElementById('policeReport').value = 'Yes, and I have the report';
-                    document.getElementById('faultDeclared').value = 'Yes, Police declared other at fault';
-                    document.getElementById('atFaultParty').value = 'The other driver was completely at fault';
+                    document.getElementById('sourceOfFault').value = '';
+                    document.getElementById('liabilityAssessment').value = '';
+                    document.getElementById('accidentSituation').value = '';
                     document.getElementById('injuryNotes').value = '';
                     document.getElementById('treatmentNotes').value = '';
-                    document.getElementById('impactLife').value = 'Yes, unable to work';
-                    document.getElementById('attorneyStatus').value = 'No, I do not have an attorney';
-                    document.getElementById('settlementStatus').value = 'No, I haven\'t received any payment';
-                    document.getElementById('releaseSigned').value = 'No';
+                    document.getElementById('impactLife').value = '';
+                    document.getElementById('attorneyStatus').value = '';
+                    document.getElementById('settlementStatus').value = '';
+                    document.getElementById('releaseSigned').value = '';
                     
                     // Reset icons
                     setupIconWatchers();
