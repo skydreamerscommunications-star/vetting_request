@@ -2,432 +2,581 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vetting Request | Pre-Transfer Declaration</title>
-    <!-- Tailwind CSS v3 -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome 6 (free icons) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts Inter (compact) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-        body { background: #f5f7fb; }
-        /* Compact spacing overrides */
-        .compact-input, select, input, textarea { 
-            font-size: 0.875rem; 
-            padding: 0.5rem 0.75rem; 
-            border-radius: 0.5rem;
-        }
-        label { font-size: 0.75rem; font-weight: 500; color: #1e293b; margin-bottom: 0.125rem; display: block; }
-        .section-title { font-size: 0.9rem; font-weight: 600; letter-spacing: -0.2px; }
-        .campaign-btn { transition: all 0.15s ease; border-radius: 2rem; padding: 0.5rem 1.25rem; font-weight: 500; }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #e9eef5 100%); min-height: 100vh; }
+        .transition-smooth { transition: all 0.2s ease-in-out; }
+        input, select, textarea { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+        .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%); transform: translateY(-1px); }
+        .campaign-btn-active { background: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .campaign-btn-inactive { background: white; color: #374151; border-color: #e5e7eb; }
+        .campaign-btn-inactive:hover:not(:disabled) { background: #f9fafb; border-color: #d1d5db; }
+        .loader { border: 2px solid #f3f4f6; border-top: 2px solid #2563eb; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.6s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .form-section { background: white; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03); }
+        .section-title { font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; border-left: 3px solid #3b82f6; padding-left: 0.75rem; }
         .required-star::after { content: "*"; color: #ef4444; margin-left: 2px; }
-        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
-        .radio-group { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
-        .field-icon { width: 1rem; color: #64748b; margin-right: 0.25rem; }
-        hr { margin: 0.75rem 0; }
-        .transition-fade { transition: opacity 0.2s ease; }
-        .error-shake { animation: shake 0.2s ease-in-out 0s 2; background-color: #fee2e2; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+        .toast-success { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
-<body class="p-4 flex justify-center items-start min-h-screen">
-
-<div class="w-full max-w-4xl bg-white rounded-2xl shadow-md border border-gray-100 p-5 md:p-6 my-6">
-    
-    <!-- Header dynamic -->
-    <div class="text-center mb-5">
-        <h1 id="dynamicHeader" class="text-2xl font-bold text-slate-800 tracking-tight">Lead Information</h1>
-        <p class="text-xs text-slate-400 mt-1">Pre-transfer Declaration · QA & Accountability</p>
-    </div>
-
-    <!-- ========== LEAD INFO SECTION (compact 2-col) ========== -->
-    <div class="bg-gray-50/40 rounded-xl p-4 mb-4">
-        <div class="flex items-center gap-2 mb-3">
-            <i class="fas fa-user-circle text-blue-500 text-sm"></i>
-            <span class="section-title text-slate-700">Lead Details</span>
+<body class="p-6">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 id="pageHeader" class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Lead Information</h1>
+            <p class="text-sm text-gray-500 mt-2">Pre-transfer Declaration · QA Layer</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-                <label class="required-star"><i class="fas fa-phone-alt field-icon"></i> Phone</label>
-                <input type="tel" id="phone" class="w-full border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-300 compact-input" placeholder="(555) 123-4567">
-            </div>
-            <div>
-                <label class="required-star"><i class="fas fa-user field-icon"></i> First Name</label>
-                <input type="text" id="firstName" class="w-full border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-300 compact-input" placeholder="John" autocomplete="off">
-            </div>
-            <div>
-                <label class="required-star"><i class="fas fa-user field-icon"></i> Last Name</label>
-                <input type="text" id="lastName" class="w-full border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-300 compact-input" placeholder="Doe">
-            </div>
-            <div>
-                <label class="required-star"><i class="fas fa-map-marker-alt field-icon"></i> State</label>
-                <select id="state" class="w-full border border-gray-200 rounded-lg bg-white compact-input">
-                    <option value="">Select State</option>
-                    <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option>
-                    <option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option>
-                    <option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option>
-                    <option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option>
-                    <option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
-                    <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option>
-                    <option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
-                </select>
-            </div>
-            <div>
-                <label class="required-star"><i class="fas fa-mail-bulk field-icon"></i> ZIP Code</label>
-                <input type="text" id="zip" maxlength="5" class="w-full border border-gray-200 rounded-lg compact-input" placeholder="12345">
-            </div>
-            <div class="md:col-span-2">
-                <label class="required-star"><i class="fas fa-link field-icon"></i> TrustedForm URL</label>
-                <input type="text" id="trustedForm" class="w-full border border-gray-200 rounded-lg compact-input" placeholder="https://cert.trustedform.com/...">
-                <p class="text-[10px] text-gray-400 mt-0.5">Must contain "cert.trustedform.com"</p>
-            </div>
+
+        <!-- Campaign Buttons -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button id="autoBtn" class="campaign-btn-inactive campaign-btn px-8 py-3 rounded-xl font-semibold text-base border-2 transition-smooth flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fas fa-car text-lg"></i> Auto
+            </button>
+            <button id="mvaBtn" class="campaign-btn-inactive campaign-btn px-8 py-3 rounded-xl font-semibold text-base border-2 transition-smooth flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fas fa-gavel text-lg"></i> MVA
+            </button>
         </div>
-    </div>
 
-    <!-- CAMPAIGN BUTTONS (centered compact) -->
-    <div class="flex justify-center gap-3 my-5">
-        <button id="campaignAutoBtn" class="campaign-btn border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 px-5 py-2 text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed">
-            <i class="fas fa-car mr-1"></i> Auto
-        </button>
-        <button id="campaignMvaBtn" class="campaign-btn border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 px-5 py-2 text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed">
-            <i class="fas fa-gavel mr-1"></i> MVA
-        </button>
-    </div>
+        <!-- Main Form Container -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-6 md:p-8">
+                <!-- Lead Information Section -->
+                <div class="form-section p-0 mb-6">
+                    <div class="section-title">
+                        <i class="fas fa-user-circle text-blue-500"></i>
+                        Contact Information
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 required-star mb-1">
+                                <i class="fas fa-phone-alt mr-1 text-gray-400"></i> Phone
+                            </label>
+                            <input type="tel" id="phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200" placeholder="(555) 123-4567">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 required-star mb-1">
+                                <i class="fas fa-user mr-1 text-gray-400"></i> First Name
+                            </label>
+                            <input type="text" id="firstName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200" placeholder="John">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 required-star mb-1">
+                                <i class="fas fa-user mr-1 text-gray-400"></i> Last Name
+                            </label>
+                            <input type="text" id="lastName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200" placeholder="Doe">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 required-star mb-1">
+                                <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i> State
+                            </label>
+                            <select id="state" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-200">
+                                <option value="">Select State</option>
+                                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option>
+                                <option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option>
+                                <option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option>
+                                <option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option>
+                                <option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+                                <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option>
+                                <option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 required-star mb-1">
+                                <i class="fas fa-mail-bulk mr-1 text-gray-400"></i> ZIP Code
+                            </label>
+                            <input type="text" id="zip" maxlength="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200" placeholder="12345">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 required-star mb-1">
+                                <i class="fas fa-link mr-1 text-gray-400"></i> TrustedForm URL
+                            </label>
+                            <input type="text" id="trustedFormUrl" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200" placeholder="https://cert.trustedform.com/...">
+                            <p class="text-xs text-gray-500 mt-1">Must contain "cert.trustedform.com"</p>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- DYNAMIC FORM SECTIONS (Auto or MVA) -->
-    <div id="autoFormContainer" class="hidden transition-fade mt-2"></div>
-    <div id="mvaFormContainer" class="hidden transition-fade mt-2"></div>
+                <!-- Auto Form (Hidden by default) -->
+                <div id="autoForm" class="hidden">
+                    <div class="form-section p-0 mb-6">
+                        <div class="section-title">
+                            <i class="fas fa-car text-blue-500"></i>
+                            Vehicle & Insurance Details
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">Make</label>
+                                <select id="autoMake" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option value="">Select Make</option>
+                                    <option>Toyota</option><option>Honda</option><option>Ford</option><option>Chevrolet</option><option>Nissan</option>
+                                    <option>Hyundai</option><option>Kia</option><option>Subaru</option><option>BMW</option><option>Mercedes-Benz</option>
+                                    <option>Volkswagen</option><option>Mazda</option><option>Dodge</option><option>Jeep</option><option>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">Model</label>
+                                <input type="text" id="autoModel" class="w-full px-4 py-3 border border-gray-300 rounded-lg" placeholder="e.g., Camry">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">Year</label>
+                                <select id="autoYear" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option value="">Select Year</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">Current Provider</label>
+                                <select id="autoProvider" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option value="">Select Provider</option>
+                                    <option>State Farm</option><option>Geico</option><option>Progressive</option><option>Allstate</option>
+                                    <option>USAA</option><option>Liberty Mutual</option><option>Farmers</option><option>Nationwide</option>
+                                    <option>Travelers</option><option>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">License Status</label>
+                                <select id="autoLicense" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option>Valid</option><option>Suspended</option><option>None</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">Violations</label>
+                                <select id="autoViolations" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option>Clean</option><option>Minor</option><option>Major</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- COMMON: Consent + Agent section -->
-    <div id="commonSection" class="mt-6 pt-3 border-t border-gray-100 hidden">
-        <div class="flex items-start gap-2 mb-3">
-            <input type="checkbox" id="consentCheck" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-gray-300">
-            <label for="consentCheck" id="consentLabel" class="text-xs text-gray-600 leading-tight font-normal">I confirm the lead has provided consent and all information is accurate.</label>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 items-end">
-            <div>
-                <label class="required-star"><i class="fas fa-user-tie field-icon"></i> Agent Name</label>
-                <select id="agentSelect" class="w-full border border-gray-200 rounded-lg bg-white compact-input">
-                    <option value="">Loading agents...</option>
-                </select>
-            </div>
-        </div>
-        <button id="submitFinalBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl mt-5 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-            <i class="fas fa-paper-plane"></i> Submit Vetting Request
-        </button>
-        <div id="globalFeedback" class="text-xs mt-3 hidden p-2 rounded-lg"></div>
-    </div>
+                <!-- MVA Form (Hidden by default) -->
+                <div id="mvaForm" class="hidden">
+                    <!-- Accident Details -->
+                    <div class="form-section p-0 mb-6">
+                        <div class="section-title">
+                            <i class="fas fa-calendar-alt text-blue-500"></i>
+                            Accident Details
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">Date of Accident</label>
+                                <input type="date" id="accidentDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">State of Accident</label>
+                                <select id="accidentState" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option value="">Select State</option>
+                                    <option>CA</option><option>TX</option><option>FL</option><option>NY</option><option>IL</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">Scenario Description</label>
+                                <input type="text" id="scenario" class="w-full px-4 py-3 border border-gray-300 rounded-lg" placeholder="e.g., Rear-end collision at intersection">
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- primary action hint -->
-    <div id="leadInfoHint" class="text-center text-xs text-gray-400 mt-3">
-        <i class="fas fa-info-circle"></i> Complete lead details to enable campaign selection
-    </div>
-</div>
+                    <!-- Side-by-Side Layout -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Left Column -->
+                        <div class="form-section p-0">
+                            <div class="section-title">
+                                <i class="fas fa-gavel text-blue-500"></i>
+                                Fault Determination
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 required-star mb-1">Police Report</label>
+                                    <select id="policeReport" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                        <option>Yes, and I have the report</option>
+                                        <option>Yes, but I don't have a copy</option>
+                                        <option>Police were called but didn't arrive</option>
+                                        <option>Police were not called</option>
+                                        <option>Unsure / don't remember</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 required-star mb-1">Was other party declared at fault?</label>
+                                    <select id="faultDeclared" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                        <option>Yes, Police declared other at fault</option>
+                                        <option>Yes, Insurance declared other at fault</option>
+                                        <option>No, declared me at fault</option>
+                                        <option>Both parties contributed</option>
+                                        <option>Undetermined / Pending</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 required-star mb-1">Who was at fault?</label>
+                                    <select id="atFaultParty" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                        <option>The other driver was completely at fault</option>
+                                        <option>Client was at fault</option>
+                                        <option>Both drivers were partially at fault</option>
+                                        <option>Unsure / don't know</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-<script>
-    // ==================== BACKEND CONFIGURATION ====================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzdh1DLqbyhHAZNjV5O_0VwW5njnZgQ7P6jczsqSVjjXrHmkjLC3bqsFKS5fmwsA58/exec";
-    
-    // ==================== DATA STRUCTURES ====================
-    // Auto dropdowns: makes (top 25) + models dependency mapping (simplified but real-time)
-    const makesList = ["Toyota","Honda","Ford","Chevrolet","Nissan","Hyundai","Kia","Subaru","BMW","Mercedes-Benz","Volkswagen","Mazda","Dodge","Jeep","Ram","GMC","Lexus","Audi","Volvo","Tesla","Chrysler","Buick","Cadillac","Acura","Other"];
-    // Model mapping for popular makes (others will show text input)
-    const modelMap = {
-        "Toyota": ["Camry","Corolla","RAV4","Highlander","Tacoma","Tundra","Prius","Sienna"],
-        "Honda": ["Civic","Accord","CR-V","Pilot","Odyssey","HR-V","Passport"],
-        "Ford": ["F-150","Escape","Explorer","Mustang","Edge","Ranger","Bronco"],
-        "Chevrolet": ["Silverado","Equinox","Malibu","Traverse","Tahoe","Colorado","Blazer"],
-        "Nissan": ["Altima","Rogue","Sentra","Pathfinder","Murano","Versa"],
-        "Hyundai": ["Elantra","Sonata","Tucson","Santa Fe","Kona","Palisade"],
-        "Kia": ["Sportage","Sorento","Forte","Optima","Telluride","Soul"],
-        "Other": []
-    };
-    const yearOptions = Array.from({length: 45}, (_, i) => new Date().getFullYear() - i);
-    const providersList = ["State Farm","Geico","Progressive","Allstate","USAA","Liberty Mutual","Farmers","Nationwide","Travelers","American Family","AIG","MetLife","Mercury","The General","Root","Other"];
-    const licenseStatus = ["Valid","Suspended","None"];
-    const violationsList = ["Clean","Minor","Major"];
-    
-    // MVA specific arrays
-    const policeReportOpts = ["Yes, and I have the report","Yes, but I don’t have a copy","Police were called but didn’t arrive","Police were not called","Police came but did not file a report","Unsure / don’t remember","Pending","Other"];
-    const faultDeclareOpts = ["Yes, Police declared other at fault","Yes, Insurance declared other at fault","Yes, Both declared other at fault","No, declared me at fault","Both parties contributed","Undetermined","No official determination","Unsure"];
-    const atFaultOpts = ["The other driver was completely at fault","Client was at fault","Both drivers were partially at fault","Unsure / don’t know"];
-    const injuryNatureOpts = ["Whiplash / neck pain","Back pain / spinal injury","Broken bones / fractures","Head injury / concussion","Traumatic brain injury","Cuts / lacerations","Internal injuries","Nerve damage","Soft tissue injuries","Psychological trauma","Other"];
-    const treatmentTypeOpts = ["Emergency Room (ER)","Hospital admission","Ambulance transport","Primary care","Urgent care","Chiropractor","Physical therapy","Pain management","Specialist","Home care","Other"];
-    const medicalBillsOpts = ["Yes","No","Unsure"];
-    const impactOpts = ["Yes, unable to work","Yes, limited work","No significant impact"];
-    const treatmentTiming = ["Immediately / same day","Within a few days","Haven’t sought treatment yet"];
-    const attorneyOpts = ["No, I do not have an attorney","Yes, I have signed paperwork","Yes, spoken but not signed","In process","Unsure"];
-    const settlementOpts = ["No","Yes, vehicle only","Yes, injury compensation","Partial payments"];
-    const releaseOpts = ["No","Yes -> DNQ (Not blocking but recorded)","Not sure"];
-    
-    // state
-    let currentCampaign = null; // null, "Auto", "MVA"
-    let leadInfoValid = false;
-    let agents = ["Alice Johnson","Bob Smith","Carol Davis","David Wilson","Emma Brown"]; // fallback
-    let dynamicModelInput = null;
-    
-    // DOM refs
-    const autoContainer = document.getElementById('autoFormContainer');
-    const mvaContainer = document.getElementById('mvaFormContainer');
-    const commonSection = document.getElementById('commonSection');
-    const campaignAutoBtn = document.getElementById('campaignAutoBtn');
-    const campaignMvaBtn = document.getElementById('campaignMvaBtn');
-    const submitBtn = document.getElementById('submitFinalBtn');
-    const headerEl = document.getElementById('dynamicHeader');
-    const consentLabelSpan = document.getElementById('consentLabel');
-    const leadHint = document.getElementById('leadInfoHint');
-    
-    // ----- Helper: Validate lead info -----
-    function validateLeadInfo() {
-        const phone = document.getElementById('phone').value.trim();
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const state = document.getElementById('state').value;
-        const zip = document.getElementById('zip').value.trim();
-        const tfUrl = document.getElementById('trustedForm').value.trim();
-        let valid = true;
-        if(!phone) valid = false;
-        if(!firstName) valid = false;
-        if(!lastName) valid = false;
-        if(!state) valid = false;
-        if(!zip || !/^\d{5}$/.test(zip)) valid = false;
-        if(!tfUrl || !tfUrl.includes("cert.trustedform.com")) valid = false;
-        leadInfoValid = valid;
-        // Enable/disable campaign buttons
-        campaignAutoBtn.disabled = !valid;
-        campaignMvaBtn.disabled = !valid;
-        if(!valid) {
-            campaignAutoBtn.classList.remove("bg-blue-600","text-white","border-blue-600");
-            campaignMvaBtn.classList.remove("bg-blue-600","text-white","border-blue-600");
-            campaignAutoBtn.classList.add("bg-white","text-gray-700");
-            campaignMvaBtn.classList.add("bg-white","text-gray-700");
-            if(currentCampaign) resetCampaignSelection();
-        } else {
-            leadHint.innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Lead info complete — select campaign';
-        }
-        return valid;
-    }
-    
-    function resetCampaignSelection() {
-        currentCampaign = null;
-        autoContainer.classList.add('hidden');
-        mvaContainer.classList.add('hidden');
-        commonSection.classList.add('hidden');
-        headerEl.innerText = "Lead Information";
-        campaignAutoBtn.classList.remove("bg-blue-600","text-white","border-blue-600");
-        campaignMvaBtn.classList.remove("bg-blue-600","text-white","border-blue-600");
-        campaignAutoBtn.classList.add("bg-white","text-gray-700");
-        campaignMvaBtn.classList.add("bg-white","text-gray-700");
-        leadHint.innerHTML = '<i class="fas fa-info-circle"></i> Complete lead details to enable campaign selection';
-    }
-    
-    // Build Auto Form (compact grid)
-    function buildAutoForm() {
-        autoContainer.innerHTML = `
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-                <div class="flex items-center gap-2 mb-3"><i class="fas fa-car text-blue-500"></i><span class="section-title">Vehicle & Insurance</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div><label class="required-star">Make</label><select id="autoMake" class="w-full border rounded-lg compact-input"><option value="">Select Make</option>${makesList.map(m => `<option>${m}</option>`).join('')}</select></div>
-                    <div><label class="required-star">Model</label><input type="text" id="autoModel" class="w-full border rounded-lg compact-input" placeholder="e.g., Camry"></div>
-                    <div><label class="required-star">Year</label><select id="autoYear" class="w-full border rounded-lg compact-input"><option value="">Year</option>${yearOptions.map(y => `<option>${y}</option>`).join('')}</select></div>
-                    <div><label class="required-star">Provider</label><select id="autoProvider" class="w-full border rounded-lg compact-input"><option value="">Select</option>${providersList.map(p => `<option>${p}</option>`).join('')}</select></div>
-                    <div><label class="required-star">License Status</label><select id="autoLicense" class="w-full border rounded-lg compact-input">${licenseStatus.map(l => `<option>${l}</option>`).join('')}</select></div>
-                    <div><label class="required-star">Violations</label><select id="autoViolations" class="w-full border rounded-lg compact-input">${violationsList.map(v => `<option>${v}</option>`).join('')}</select></div>
+                        <!-- Right Column -->
+                        <div class="form-section p-0">
+                            <div class="section-title">
+                                <i class="fas fa-notes-medical text-blue-500"></i>
+                                Injuries & Treatment
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nature of Injuries</label>
+                                    <textarea id="injuryNotes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg" placeholder="Describe injuries (e.g., whiplash, back pain, cuts, bruises)"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Type of Treatment</label>
+                                    <textarea id="treatmentNotes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg" placeholder="Describe treatment received (ER, physical therapy, chiropractor, etc.)"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 required-star mb-1">Impact on Daily Life</label>
+                                    <select id="impactLife" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                        <option>Yes, unable to work</option>
+                                        <option>Yes, limited work / activities</option>
+                                        <option>No significant impact</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Representation Section -->
+                    <div class="form-section p-0 mb-6">
+                        <div class="section-title">
+                            <i class="fas fa-balance-scale text-blue-500"></i>
+                            Representation & Claim Check
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Attorney Status</label>
+                                <select id="attorneyStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option>No, I do not have an attorney</option>
+                                    <option>Yes, I have signed paperwork with an attorney</option>
+                                    <option>Yes, I have spoken to an attorney but did not sign</option>
+                                    <option>I am in the process of hiring an attorney</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Settlement Status</label>
+                                <select id="settlementStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option>No, I haven't received any payment</option>
+                                    <option>Yes, for vehicle/property damage only</option>
+                                    <option>Yes, for medical bills or injury compensation</option>
+                                    <option>Yes, but only partial payments</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Release Signed</label>
+                                <select id="releaseSigned" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                                    <option>No</option>
+                                    <option>Yes</option>
+                                    <option>Not sure</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consent & Agent Section -->
+                <div id="commonSection" class="hidden">
+                    <div class="form-section p-0 mb-6">
+                        <div class="section-title">
+                            <i class="fas fa-check-circle text-blue-500"></i>
+                            Consent & Agent Verification
+                        </div>
+                        <div class="space-y-5">
+                            <div class="flex items-start gap-3">
+                                <input type="checkbox" id="consentCheck" class="mt-1 w-5 h-5 text-blue-600 rounded border-gray-300">
+                                <label id="consentLabel" class="text-sm text-gray-700 leading-relaxed">I confirm that the lead has provided consent for transfer and all information is accurate to the best of my knowledge.</label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 required-star mb-1">
+                                    <i class="fas fa-user-tie mr-1 text-gray-400"></i> Agent Name
+                                </label>
+                                <select id="agentSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white">
+                                    <option value="">Loading agents...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="submitBtn" class="w-full btn-primary text-white font-bold py-4 rounded-xl transition-smooth text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3">
+                        <i class="fas fa-paper-plane"></i> Submit Vetting Request
+                    </button>
                 </div>
             </div>
-        `;
-        const makeSelect = document.getElementById('autoMake');
-        const modelInput = document.getElementById('autoModel');
-        makeSelect.addEventListener('change', () => {
-            const selected = makeSelect.value;
-            if(modelMap[selected] && modelMap[selected].length) {
-                const datalistId = "modelDatalist";
-                let datalist = document.getElementById(datalistId);
-                if(!datalist) {
-                    datalist = document.createElement('datalist');
-                    datalist.id = datalistId;
-                    modelInput.setAttribute('list', datalistId);
-                    modelInput.parentNode.appendChild(datalist);
-                }
-                datalist.innerHTML = modelMap[selected].map(m => `<option value="${m}">`).join('');
-                modelInput.placeholder = "Type or select";
-            } else {
-                modelInput.removeAttribute('list');
-                modelInput.placeholder = "Enter model";
-            }
-        });
-    }
-    
-    // MVA Form (compact but feature rich)
-    function buildMvaForm() {
-        mvaContainer.innerHTML = `
-            <div class="space-y-4">
-                <div class="bg-white border rounded-xl p-4"><div class="flex gap-2 mb-2"><i class="fas fa-calendar-alt text-blue-500"></i><span class="font-semibold text-sm">Accident Details</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div><label class="required-star">Date of Accident</label><input type="date" id="accidentDate" class="w-full border rounded-lg compact-input"></div>
-                    <div><label class="required-star">State of Accident</label><select id="accidentState" class="w-full border rounded-lg compact-input"><option value="">Select</option><option>CA</option><option>TX</option><option>FL</option><option>NY</option><option>IL</option><option>PA</option><option>OH</option><option>GA</option><option>NC</option><option>MI</option></select></div>
-                    <div class="md:col-span-2"><label>Scenario (short)</label><input type="text" id="scenario" class="w-full border rounded-lg compact-input" placeholder="e.g., Rear-end at red light"></div>
-                </div></div>
-                <div class="bg-white border rounded-xl p-4"><div class="flex gap-2 mb-2"><i class="fas fa-gavel text-blue-500"></i><span class="font-semibold text-sm">Fault Determination</span></div>
-                <div class="grid gap-2"><label>Police Report</label><select id="policeReport" class="w-full border rounded-lg compact-input">${policeReportOpts.map(opt => `<option>${opt}</option>`).join('')}</select>
-                <label>Was other party declared at fault?</label><select id="faultDeclaration" class="w-full border rounded-lg compact-input">${faultDeclareOpts.map(opt => `<option>${opt}</option>`).join('')}</select>
-                <label>Who was at fault?</label><select id="atFaultParty" class="w-full border rounded-lg compact-input">${atFaultOpts.map(opt => `<option>${opt}</option>`).join('')}</select>
-                </div></div>
-                <div class="bg-white border rounded-xl p-4"><div class="flex gap-2 mb-2"><i class="fas fa-notes-medical text-blue-500"></i><span class="font-semibold text-sm">Injuries & Treatment</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><div><label>Nature of Injuries (multi)</label><select id="injuryNature" multiple size="3" class="w-full border rounded-lg compact-input">${injuryNatureOpts.map(opt => `<option>${opt}</option>`).join('')}</select><span class="text-[10px]">Ctrl+click multiple</span></div>
-                <div><label>Type of Treatment (multi)</label><select id="treatmentTypeSelect" multiple size="3" class="w-full border rounded-lg compact-input">${treatmentTypeOpts.map(opt => `<option>${opt}</option>`).join('')}</select></div>
-                <div><label>Medical Bills</label><select id="medicalBills" class="w-full border rounded-lg compact-input">${medicalBillsOpts.map(opt => `<option>${opt}</option>`).join('')}</select></div>
-                <div><label>Impact on Life</label><select id="impactLife" class="w-full border rounded-lg compact-input">${impactOpts.map(opt => `<option>${opt}</option>`).join('')}</select></div>
-                <div><label>First Treatment Timing</label><select id="treatmentTiming" class="w-full border rounded-lg compact-input">${treatmentTiming.map(opt => `<option>${opt}</option>`).join('')}</select></div>
-                </div></div>
-                <div class="bg-white border rounded-xl p-4"><div class="flex gap-2 mb-2"><i class="fas fa-balance-scale text-blue-500"></i><span class="font-semibold text-sm">Representation</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><div><label>Attorney Status</label><select id="attorneyStatus" class="w-full border rounded-lg compact-input">${attorneyOpts.map(opt => `<option>${opt}</option>`).join('')}</select></div>
-                <div><label>Settlement Status</label><select id="settlementStatus" class="w-full border rounded-lg compact-input">${settlementOpts.map(opt => `<option>${opt}</option>`).join('')}</select></div>
-                <div><label>Release Signed</label><select id="releaseSigned" class="w-full border rounded-lg compact-input">${releaseOpts.map(opt => `<option>${opt}</option>`).join('')}</select></div>
-                </div></div>
-            </div>
-        `;
-    }
-    
-    function gatherAutoData() {
-        return {
-            make: document.getElementById('autoMake')?.value || '',
-            model: document.getElementById('autoModel')?.value || '',
-            year: document.getElementById('autoYear')?.value || '',
-            provider: document.getElementById('autoProvider')?.value || '',
-            licenseStatus: document.getElementById('autoLicense')?.value || '',
-            violations: document.getElementById('autoViolations')?.value || ''
-        };
-    }
-    
-    function gatherMvaData() {
-        const injuryNode = document.getElementById('injuryNature');
-        const treatmentNode = document.getElementById('treatmentTypeSelect');
-        return {
-            accidentDate: document.getElementById('accidentDate')?.value || '',
-            accidentState: document.getElementById('accidentState')?.value || '',
-            scenario: document.getElementById('scenario')?.value || '',
-            policeReport: document.getElementById('policeReport')?.value || '',
-            faultDeclaration: document.getElementById('faultDeclaration')?.value || '',
-            atFaultParty: document.getElementById('atFaultParty')?.value || '',
-            injuryNature: injuryNode ? Array.from(injuryNode.selectedOptions).map(o=>o.value).join(', ') : '',
-            treatmentType: treatmentNode ? Array.from(treatmentNode.selectedOptions).map(o=>o.value).join(', ') : '',
-            medicalBills: document.getElementById('medicalBills')?.value || '',
-            impactLife: document.getElementById('impactLife')?.value || '',
-            treatmentTiming: document.getElementById('treatmentTiming')?.value || '',
-            attorneyStatus: document.getElementById('attorneyStatus')?.value || '',
-            settlementStatus: document.getElementById('settlementStatus')?.value || '',
-            releaseSigned: document.getElementById('releaseSigned')?.value || ''
-        };
-    }
-    
-    function validateCampaignForms() {
-        if(currentCampaign === 'Auto') {
-            const make = document.getElementById('autoMake')?.value;
-            const model = document.getElementById('autoModel')?.value;
-            const year = document.getElementById('autoYear')?.value;
-            const provider = document.getElementById('autoProvider')?.value;
-            const license = document.getElementById('autoLicense')?.value;
-            const violations = document.getElementById('autoViolations')?.value;
-            return make && model && year && provider && license && violations;
-        } else if(currentCampaign === 'MVA') {
-            const date = document.getElementById('accidentDate')?.value;
-            const state = document.getElementById('accidentState')?.value;
-            const police = document.getElementById('policeReport')?.value;
-            const faultDec = document.getElementById('faultDeclaration')?.value;
-            const atFault = document.getElementById('atFaultParty')?.value;
-            return date && state && police && faultDec && atFault;
-        }
-        return false;
-    }
-    
-    async function loadAgents() {
-        try {
-            const res = await fetch(`${WEB_APP_URL}?action=agents`);
-            const data = await res.json();
-            if(Array.isArray(data) && data.length) agents = data;
-        } catch(e) { console.warn("using fallback agents"); }
-        const select = document.getElementById('agentSelect');
-        select.innerHTML = '<option value="">Select Agent</option>' + agents.map(a => `<option value="${a}">${a}</option>`).join('');
-    }
-    
-    async function submitFinal() {
-        if(!leadInfoValid) { showFeedback("Lead info incomplete", false); return; }
-        if(!currentCampaign) { showFeedback("Select a campaign (Auto/MVA)", false); return; }
-        if(!validateCampaignForms()) { showFeedback("Please fill all qualification fields", false); return; }
-        if(!document.getElementById('consentCheck').checked) { showFeedback("Consent required", false); return; }
-        const agent = document.getElementById('agentSelect').value;
-        if(!agent) { showFeedback("Select agent name", false); return; }
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const WEB_APP_URL = "{{SCRIPT_DEPLOYMENT_URL}}"; // Replace with your Apps Script URL
         
-        const leadData = {
-            timestamp: new Date().toISOString(),
-            campaign: currentCampaign,
-            phone: document.getElementById('phone').value.trim(),
-            firstName: document.getElementById('firstName').value.trim(),
-            lastName: document.getElementById('lastName').value.trim(),
-            state: document.getElementById('state').value,
-            zip: document.getElementById('zip').value.trim(),
-            trustedFormUrl: document.getElementById('trustedForm').value.trim(),
-            agentName: agent,
-            qualification: currentCampaign === 'Auto' ? gatherAutoData() : gatherMvaData()
-        };
-        try {
-            const response = await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(leadData) });
-            showFeedback("✓ Vetting request submitted successfully!", true);
-            setTimeout(() => window.location.reload(), 1200);
-        } catch(err) { showFeedback("Submission error. Check network/backend.", false); }
-    }
-    
-    function showFeedback(msg, isSuccess) {
-        const fb = document.getElementById('globalFeedback');
-        fb.classList.remove('hidden', 'bg-red-50', 'bg-green-50');
-        fb.classList.add(isSuccess ? 'bg-green-50' : 'bg-red-50', 'p-2', 'rounded-lg', 'text-center');
-        fb.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-1"></i>${msg}`;
-        setTimeout(()=> fb.classList.add('hidden'), 3000);
-    }
-    
-    // Event listeners on lead fields
-    const leadInputs = ['phone','firstName','lastName','state','zip','trustedForm'];
-    leadInputs.forEach(id => document.getElementById(id).addEventListener('input', () => { validateLeadInfo(); if(!leadInfoValid) resetCampaignSelection(); }));
-    
-    campaignAutoBtn.addEventListener('click', () => {
-        if(!leadInfoValid) return;
-        currentCampaign = "Auto";
-        headerEl.innerText = "Auto Vetting Form";
-        campaignAutoBtn.classList.add("bg-blue-600","text-white","border-blue-600");
-        campaignMvaBtn.classList.remove("bg-blue-600","text-white","border-blue-600");
-        campaignMvaBtn.classList.add("bg-white","text-gray-700");
-        autoContainer.classList.remove('hidden');
-        mvaContainer.classList.add('hidden');
-        commonSection.classList.remove('hidden');
-        if(autoContainer.innerHTML.trim() === "") buildAutoForm();
-        consentLabelSpan.innerText = "I confirm consent for Auto insurance transfer and declaration.";
-    });
-    
-    campaignMvaBtn.addEventListener('click', () => {
-        if(!leadInfoValid) return;
-        currentCampaign = "MVA";
-        headerEl.innerText = "MVA Vetting Form";
-        campaignMvaBtn.classList.add("bg-blue-600","text-white","border-blue-600");
-        campaignAutoBtn.classList.remove("bg-blue-600","text-white","border-blue-600");
-        campaignAutoBtn.classList.add("bg-white","text-gray-700");
-        mvaContainer.classList.remove('hidden');
-        autoContainer.classList.add('hidden');
-        commonSection.classList.remove('hidden');
-        if(mvaContainer.innerHTML.trim() === "") buildMvaForm();
-        consentLabelSpan.innerText = "I confirm consent for MVA accident claim and accuracy of details.";
-    });
-    
-    submitBtn.addEventListener('click', submitFinal);
-    validateLeadInfo();
-    loadAgents();
-    buildAutoForm();
-    buildMvaForm();
-    autoContainer.classList.add('hidden');
-    mvaContainer.classList.add('hidden');
-</script>
+        // State
+        let currentCampaign = null;
+        let leadInfoValid = false;
+        let isSubmitting = false;
+        let agents = [];
+        
+        // DOM Elements
+        const autoBtn = document.getElementById('autoBtn');
+        const mvaBtn = document.getElementById('mvaBtn');
+        const autoForm = document.getElementById('autoForm');
+        const mvaForm = document.getElementById('mvaForm');
+        const commonSection = document.getElementById('commonSection');
+        const pageHeader = document.getElementById('pageHeader');
+        const submitBtn = document.getElementById('submitBtn');
+        const consentLabel = document.getElementById('consentLabel');
+        const agentSelect = document.getElementById('agentSelect');
+        
+        // Populate years
+        const yearSelect = document.getElementById('autoYear');
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear; year >= currentYear - 40; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+        }
+        
+        // Validate Lead Info
+        function validateLeadInfo() {
+            const phone = document.getElementById('phone').value.trim();
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const state = document.getElementById('state').value;
+            const zip = document.getElementById('zip').value.trim();
+            const tfUrl = document.getElementById('trustedFormUrl').value.trim();
+            
+            const isValid = phone && firstName && lastName && state && 
+                           /^\d{5}$/.test(zip) && 
+                           tfUrl && tfUrl.includes('cert.trustedform.com');
+            
+            leadInfoValid = isValid;
+            autoBtn.disabled = !isValid;
+            mvaBtn.disabled = !isValid;
+            
+            return isValid;
+        }
+        
+        // Load Agents
+        async function loadAgents() {
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=agents`);
+                const data = await response.json();
+                
+                if (data.success && data.agents && data.agents.length) {
+                    agents = data.agents;
+                } else {
+                    agents = ['Alice Johnson', 'Bob Smith', 'Carol Davis', 'David Wilson'];
+                }
+                
+                agentSelect.innerHTML = '<option value="">Select Agent</option>' + 
+                    agents.map(agent => `<option value="${agent}">${agent}</option>`).join('');
+            } catch (error) {
+                console.error('Error loading agents:', error);
+                agents = ['Alice Johnson', 'Bob Smith', 'Carol Davis', 'David Wilson'];
+                agentSelect.innerHTML = '<option value="">Select Agent</option>' + 
+                    agents.map(agent => `<option value="${agent}">${agent}</option>`).join('');
+            }
+        }
+        
+        // Show Toast Message
+        function showMessage(message, isSuccess) {
+            const existingToast = document.querySelector('.toast-message');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg toast-success ${isSuccess ? 'bg-green-500' : 'bg-red-500'} text-white font-medium`;
+            toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 4000);
+        }
+        
+        // Switch Campaign
+        function switchCampaign(campaign) {
+            currentCampaign = campaign;
+            
+            if (campaign === 'Auto') {
+                autoForm.classList.remove('hidden');
+                mvaForm.classList.add('hidden');
+                pageHeader.textContent = 'Auto Vetting Form';
+                autoBtn.className = 'campaign-btn-active campaign-btn px-8 py-3 rounded-xl font-semibold text-base border-2 transition-smooth flex items-center gap-2';
+                mvaBtn.className = 'campaign-btn-inactive campaign-btn px-8 py-3 rounded-xl font-semibold text-base border-2 transition-smooth flex items-center gap-2';
+                consentLabel.textContent = 'I confirm that the lead has provided consent for Auto insurance transfer and all information is accurate.';
+            } else {
+                autoForm.classList.add('hidden');
+                mvaForm.classList.remove('hidden');
+                pageHeader.textContent = 'MVA Vetting Form';
+                mvaBtn.className = 'campaign-btn-active campaign-btn px-8 py-3 rounded-xl font-semibold text-base border-2 transition-smooth flex items-center gap-2';
+                autoBtn.className = 'campaign-btn-inactive campaign-btn px-8 py-3 rounded-xl font-semibold text-base border-2 transition-smooth flex items-center gap-2';
+                consentLabel.textContent = 'I confirm that the lead has provided consent for MVA claim transfer and all accident details are accurate.';
+            }
+            
+            commonSection.classList.remove('hidden');
+        }
+        
+        // Gather Auto Data
+        function gatherAutoData() {
+            return {
+                make: document.getElementById('autoMake').value,
+                model: document.getElementById('autoModel').value,
+                year: document.getElementById('autoYear').value,
+                provider: document.getElementById('autoProvider').value,
+                licenseStatus: document.getElementById('autoLicense').value,
+                violations: document.getElementById('autoViolations').value
+            };
+        }
+        
+        // Gather MVA Data
+        function gatherMvaData() {
+            return {
+                accidentDate: document.getElementById('accidentDate').value,
+                accidentState: document.getElementById('accidentState').value,
+                scenario: document.getElementById('scenario').value,
+                policeReport: document.getElementById('policeReport').value,
+                faultDeclared: document.getElementById('faultDeclared').value,
+                atFaultParty: document.getElementById('atFaultParty').value,
+                injuryNotes: document.getElementById('injuryNotes').value,
+                treatmentNotes: document.getElementById('treatmentNotes').value,
+                impactLife: document.getElementById('impactLife').value,
+                attorneyStatus: document.getElementById('attorneyStatus').value,
+                settlementStatus: document.getElementById('settlementStatus').value,
+                releaseSigned: document.getElementById('releaseSigned').value
+            };
+        }
+        
+        // Validate Campaign Forms
+        function validateCampaignForms() {
+            if (!currentCampaign) return false;
+            
+            if (currentCampaign === 'Auto') {
+                const make = document.getElementById('autoMake').value;
+                const model = document.getElementById('autoModel').value;
+                const year = document.getElementById('autoYear').value;
+                const provider = document.getElementById('autoProvider').value;
+                const license = document.getElementById('autoLicense').value;
+                const violations = document.getElementById('autoViolations').value;
+                return make && model && year && provider && license && violations;
+            } else {
+                const accidentDate = document.getElementById('accidentDate').value;
+                const accidentState = document.getElementById('accidentState').value;
+                const scenario = document.getElementById('scenario').value;
+                const policeReport = document.getElementById('policeReport').value;
+                const faultDeclared = document.getElementById('faultDeclared').value;
+                const atFaultParty = document.getElementById('atFaultParty').value;
+                const impactLife = document.getElementById('impactLife').value;
+                return accidentDate && accidentState && scenario && policeReport && faultDeclared && atFaultParty && impactLife;
+            }
+        }
+        
+        // Submit Form
+        async function submitForm() {
+            if (isSubmitting) return;
+            if (!leadInfoValid) {
+                showMessage('Please complete all lead information fields', false);
+                return;
+            }
+            if (!currentCampaign) {
+                showMessage('Please select a campaign (Auto or MVA)', false);
+                return;
+            }
+            if (!validateCampaignForms()) {
+                showMessage('Please complete all qualification fields', false);
+                return;
+            }
+            if (!document.getElementById('consentCheck').checked) {
+                showMessage('Please confirm consent to proceed', false);
+                return;
+            }
+            
+            const agentName = document.getElementById('agentSelect').value;
+            if (!agentName) {
+                showMessage('Please select an agent name', false);
+                return;
+            }
+            
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loader mr-2"></div> Submitting...';
+            
+            const payload = {
+                campaign: currentCampaign,
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                state: document.getElementById('state').value,
+                zip: document.getElementById('zip').value.trim(),
+                trustedFormUrl: document.getElementById('trustedFormUrl').value.trim(),
+                agentName: agentName,
+                qualification: currentCampaign === 'Auto' ? gatherAutoData() : gatherMvaData()
+            };
+            
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`✓ Vetting request submitted! ID: ${result.submissionId || 'success'}`, true);
+                    // Reset form
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showMessage(`✗ Submission failed: ${result.message}`, false);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Vetting Request';
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showMessage('Network error. Please check your connection and try again.', false);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Vetting Request';
+            } finally {
+                isSubmitting = false;
+            }
+        }
+        
+        // Event Listeners
+        const leadInputs = ['phone', 'firstName', 'lastName', 'state', 'zip', 'trustedFormUrl'];
+        leadInputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', validateLeadInfo);
+            document.getElementById(id).addEventListener('change', validateLeadInfo);
+        });
+        
+        autoBtn.addEventListener('click', () => {
+            if (leadInfoValid) switchCampaign('Auto');
+        });
+        
+        mvaBtn.addEventListener('click', () => {
+            if (leadInfoValid) switchCampaign('MVA');
+        });
+        
+        submitBtn.addEventListener('click', submitForm);
+        
+        // Initial validation
+        validateLeadInfo();
+        loadAgents();
+    </script>
 </body>
 </html>
