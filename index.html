@@ -66,16 +66,6 @@
             border-bottom: 1px solid #e2e8f0;
         }
         
-        .tooltip-icon {
-            cursor: help;
-            color: #94a3b8;
-            transition: color 0.15s ease;
-        }
-        
-        .tooltip-icon:hover {
-            color: #3b82f6;
-        }
-        
         .toast {
             position: fixed;
             bottom: 24px;
@@ -114,33 +104,43 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Custom tooltip styling */
-        [data-tooltip] {
+        /* Tooltip container */
+        .tooltip-wrapper {
             position: relative;
-            cursor: help;
+            display: inline-flex;
+            align-items: center;
         }
         
-        [data-tooltip]:before {
-            content: attr(data-tooltip);
+        .tooltip-text {
+            visibility: hidden;
             position: absolute;
             bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 6px 12px;
-            background: #1e293b;
+            left: 0;
+            margin-bottom: 8px;
+            background-color: #1e293b;
             color: white;
-            font-size: 12px;
+            text-align: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 400;
             white-space: nowrap;
-            border-radius: 6px;
-            display: none;
-            z-index: 10;
-            margin-bottom: 8px;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.2s;
             pointer-events: none;
         }
         
-        [data-tooltip]:hover:before {
-            display: block;
+        .tooltip-wrapper:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* For longer tooltips that need wrapping */
+        .tooltip-text-wrap {
+            white-space: normal;
+            max-width: 250px;
+            text-align: left;
         }
     </style>
 </head>
@@ -156,56 +156,110 @@
         <div id="step1Container" class="bg-white rounded-2xl border border-slate-200 p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <!-- Phone -->
-                <div class="relative">
-                    <div class="absolute left-3 top-3.5">
-                        <i id="phoneIcon" class="fas fa-phone-alt text-slate-400 transition-icon"></i>
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                        Phone Number
+                        <span class="tooltip-wrapper">
+                            <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                            <span class="tooltip-text">Enter 10-digit phone number</span>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="phoneIcon" class="fas fa-phone-alt text-slate-400 transition-icon"></i>
+                        </div>
+                        <input type="tel" id="phone" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Phone Number *">
                     </div>
-                    <input type="tel" id="phone" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Phone Number *">
                 </div>
                 
                 <!-- First Name -->
-                <div class="relative">
-                    <div class="absolute left-3 top-3.5">
-                        <i id="firstNameIcon" class="fas fa-user text-slate-400 transition-icon"></i>
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                        First Name
+                        <span class="tooltip-wrapper">
+                            <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                            <span class="tooltip-text">Lead's first name</span>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="firstNameIcon" class="fas fa-user text-slate-400 transition-icon"></i>
+                        </div>
+                        <input type="text" id="firstName" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="First Name *">
                     </div>
-                    <input type="text" id="firstName" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="First Name *">
                 </div>
                 
                 <!-- Last Name -->
-                <div class="relative">
-                    <div class="absolute left-3 top-3.5">
-                        <i id="lastNameIcon" class="fas fa-user text-slate-400 transition-icon"></i>
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                        Last Name
+                        <span class="tooltip-wrapper">
+                            <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                            <span class="tooltip-text">Lead's last name</span>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="lastNameIcon" class="fas fa-user text-slate-400 transition-icon"></i>
+                        </div>
+                        <input type="text" id="lastName" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Last Name *">
                     </div>
-                    <input type="text" id="lastName" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Last Name *">
                 </div>
                 
                 <!-- State -->
-                <div class="relative">
-                    <div class="absolute left-3 top-3.5">
-                        <i id="stateIcon" class="fas fa-map-marker-alt text-slate-400 transition-icon"></i>
-                    </div>
-                    <select id="state" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white appearance-none">
-                        <option value="">Select State *</option>
-                    </select>
-                    <div class="absolute right-3 top-3.5 pointer-events-none">
-                        <i class="fas fa-chevron-down text-slate-400 text-sm"></i>
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                        State
+                        <span class="tooltip-wrapper">
+                            <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                            <span class="tooltip-text">2-letter state code</span>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="stateIcon" class="fas fa-map-marker-alt text-slate-400 transition-icon"></i>
+                        </div>
+                        <select id="state" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white appearance-none">
+                            <option value="">Select State *</option>
+                        </select>
+                        <div class="absolute right-3 top-3.5 pointer-events-none">
+                            <i class="fas fa-chevron-down text-slate-400 text-sm"></i>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- ZIP -->
-                <div class="relative">
-                    <div class="absolute left-3 top-3.5">
-                        <i id="zipIcon" class="fas fa-mail-bulk text-slate-400 transition-icon"></i>
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                        ZIP Code
+                        <span class="tooltip-wrapper">
+                            <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                            <span class="tooltip-text">5-digit postal code</span>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="zipIcon" class="fas fa-mail-bulk text-slate-400 transition-icon"></i>
+                        </div>
+                        <input type="text" id="zip" maxlength="5" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="ZIP Code *">
                     </div>
-                    <input type="text" id="zip" maxlength="5" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="ZIP Code *">
                 </div>
                 
                 <!-- TrustedForm URL -->
-                <div class="md:col-span-2 relative">
-                    <div class="absolute left-3 top-3.5">
-                        <i id="trustedFormIcon" class="fas fa-link text-slate-400 transition-icon"></i>
+                <div class="md:col-span-2">
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                        TrustedForm URL
+                        <span class="tooltip-wrapper">
+                            <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                            <span class="tooltip-text">Must contain "cert.trustedform.com"</span>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="trustedFormIcon" class="fas fa-link text-slate-400 transition-icon"></i>
+                        </div>
+                        <input type="text" id="trustedFormUrl" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="TrustedForm URL *">
                     </div>
-                    <input type="text" id="trustedFormUrl" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="TrustedForm URL *">
                     <p class="text-xs text-slate-400 mt-1 ml-2">Must contain "cert.trustedform.com"</p>
                 </div>
             </div>
@@ -240,59 +294,113 @@
             <!-- Auto Form -->
             <div id="autoForm">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="autoMakeIcon" class="fas fa-car text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Make
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">Vehicle manufacturer</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="autoMakeIcon" class="fas fa-car text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="autoMake" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Make *</option>
+                                <option>Toyota</option><option>Honda</option><option>Ford</option><option>Chevrolet</option>
+                                <option>Nissan</option><option>Hyundai</option><option>Kia</option><option>Subaru</option>
+                                <option>BMW</option><option>Mercedes-Benz</option><option>Volkswagen</option><option>Other</option>
+                            </select>
                         </div>
-                        <select id="autoMake" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Make *</option>
-                            <option>Toyota</option><option>Honda</option><option>Ford</option><option>Chevrolet</option>
-                            <option>Nissan</option><option>Hyundai</option><option>Kia</option><option>Subaru</option>
-                            <option>BMW</option><option>Mercedes-Benz</option><option>Volkswagen</option><option>Other</option>
-                        </select>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="autoModelIcon" class="fas fa-car-side text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Model
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">Vehicle model name</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="autoModelIcon" class="fas fa-car-side text-slate-400 transition-icon"></i>
+                            </div>
+                            <input type="text" id="autoModel" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Model *">
                         </div>
-                        <input type="text" id="autoModel" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Model *">
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="autoYearIcon" class="fas fa-calendar text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Year
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">Vehicle model year</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="autoYearIcon" class="fas fa-calendar text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="autoYear" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Year *</option>
+                            </select>
                         </div>
-                        <select id="autoYear" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Year *</option>
-                        </select>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="autoProviderIcon" class="fas fa-building text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Current Provider
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">Current insurance carrier</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="autoProviderIcon" class="fas fa-building text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="autoProvider" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Provider *</option>
+                                <option>State Farm</option><option>Geico</option><option>Progressive</option>
+                                <option>Allstate</option><option>USAA</option><option>Liberty Mutual</option>
+                                <option>Farmers</option><option>Nationwide</option><option>Other</option>
+                            </select>
                         </div>
-                        <select id="autoProvider" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Provider *</option>
-                            <option>State Farm</option><option>Geico</option><option>Progressive</option>
-                            <option>Allstate</option><option>USAA</option><option>Liberty Mutual</option>
-                            <option>Farmers</option><option>Nationwide</option><option>Other</option>
-                        </select>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="autoLicenseIcon" class="fas fa-id-card text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            License Status
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">Current driver's license status</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="autoLicenseIcon" class="fas fa-id-card text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="autoLicense" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select License Status *</option>
+                                <option>Valid</option><option>Suspended</option><option>None</option>
+                            </select>
                         </div>
-                        <select id="autoLicense" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select License Status *</option>
-                            <option>Valid</option><option>Suspended</option><option>None</option>
-                        </select>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="autoViolationsIcon" class="fas fa-exclamation-triangle text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Violations
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">Recent driving violations record</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="autoViolationsIcon" class="fas fa-exclamation-triangle text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="autoViolations" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Violations *</option>
+                                <option>Clean</option><option>Minor</option><option>Major</option>
+                            </select>
                         </div>
-                        <select id="autoViolations" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Violations *</option>
-                            <option>Clean</option><option>Minor</option><option>Major</option>
-                        </select>
                     </div>
                 </div>
             </div>
@@ -305,25 +413,52 @@
                     <span class="font-semibold text-slate-700">Accident Details</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="accidentDateIcon" class="fas fa-calendar-alt text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Date of Accident
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">When did the accident occur?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="accidentDateIcon" class="fas fa-calendar-alt text-slate-400 transition-icon"></i>
+                            </div>
+                            <input type="date" id="accidentDate" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500">
                         </div>
-                        <input type="date" id="accidentDate" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500">
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="accidentStateIcon" class="fas fa-map-marker-alt text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            State of Accident
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text">Where did the accident happen?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="accidentStateIcon" class="fas fa-map-marker-alt text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="accidentState" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select State *</option>
+                            </select>
                         </div>
-                        <select id="accidentState" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select State *</option>
-                        </select>
                     </div>
-                    <div class="md:col-span-2 relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="scenarioIcon" class="fas fa-file-alt text-slate-400 transition-icon"></i>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Scenario
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">Brief description of how the accident occurred</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="scenarioIcon" class="fas fa-file-alt text-slate-400 transition-icon"></i>
+                            </div>
+                            <input type="text" id="scenario" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Scenario Description *">
                         </div>
-                        <input type="text" id="scenario" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Scenario Description *">
                     </div>
                 </div>
                 
@@ -333,46 +468,70 @@
                     <span class="font-semibold text-slate-700">Liability Assessment</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="sourceOfFaultIcon" class="fas fa-database text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Source of Fault
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">What is the source of fault determination?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="sourceOfFaultIcon" class="fas fa-database text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="sourceOfFault" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Source of Fault *</option>
+                                <option>Police report available</option>
+                                <option>Insurance determination</option>
+                                <option>Customer statement only</option>
+                                <option>No information available</option>
+                            </select>
                         </div>
-                        <select id="sourceOfFault" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Source of Fault *</option>
-                            <option>Police report available</option>
-                            <option>Insurance determination</option>
-                            <option>Customer statement only</option>
-                            <option>No information available</option>
-                        </select>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="What is the source of fault determination?"></i>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="liabilityIcon" class="fas fa-balance-scale text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Liability Assessment
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">Based on available information, who is at fault?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="liabilityIcon" class="fas fa-balance-scale text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="liabilityAssessment" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Liability Assessment *</option>
+                                <option>Other party at fault</option>
+                                <option>Shared fault</option>
+                                <option>Client at fault</option>
+                                <option>Unknown</option>
+                            </select>
                         </div>
-                        <select id="liabilityAssessment" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Liability Assessment *</option>
-                            <option>Other party at fault</option>
-                            <option>Shared fault</option>
-                            <option>Client at fault</option>
-                            <option>Unknown</option>
-                        </select>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Based on available information, who is at fault?"></i>
                     </div>
-                    <div class="md:col-span-2 relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="situationIcon" class="fas fa-car-crash text-slate-400 transition-icon"></i>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Accident Situation
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">What happened after the accident?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="situationIcon" class="fas fa-car-crash text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="accidentSituation" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Accident Situation *</option>
+                                <option>Information exchanged</option>
+                                <option>No information exchanged</option>
+                                <option>Hit and run</option>
+                                <option>Customer unconscious</option>
+                                <option>Police not present</option>
+                                <option>Unsure</option>
+                            </select>
                         </div>
-                        <select id="accidentSituation" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Accident Situation *</option>
-                            <option>Information exchanged</option>
-                            <option>No information exchanged</option>
-                            <option>Hit and run</option>
-                            <option>Customer unconscious</option>
-                            <option>Police not present</option>
-                            <option>Unsure</option>
-                        </select>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="What happened after the accident?"></i>
                     </div>
                 </div>
                 
@@ -382,31 +541,55 @@
                     <span class="font-semibold text-slate-700">Injury & Impact</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="injuryIcon" class="fas fa-notes-medical text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Nature of Injuries
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">Describe all injuries sustained (whiplash, back pain, broken bones, etc.)</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="injuryIcon" class="fas fa-notes-medical text-slate-400 transition-icon"></i>
+                            </div>
+                            <textarea id="injuryNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Nature of Injuries"></textarea>
                         </div>
-                        <textarea id="injuryNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Nature of Injuries"></textarea>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Describe all injuries sustained (whiplash, back pain, broken bones, etc.)"></i>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="treatmentIcon" class="fas fa-hospital-user text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Type of Treatment
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">What treatment has been received? (ER, physical therapy, chiropractor, etc.)</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="treatmentIcon" class="fas fa-hospital-user text-slate-400 transition-icon"></i>
+                            </div>
+                            <textarea id="treatmentNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Type of Treatment"></textarea>
                         </div>
-                        <textarea id="treatmentNotes" rows="3" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500" placeholder="Type of Treatment"></textarea>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="What treatment has been received? (ER, physical therapy, chiropractor, etc.)"></i>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="impactIcon" class="fas fa-chart-line text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Impact on Daily Life
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">Are injuries affecting daily life or ability to work?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="impactIcon" class="fas fa-chart-line text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="impactLife" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Impact on Daily Life *</option>
+                                <option>Yes, unable to work</option>
+                                <option>Yes, limited work / activities</option>
+                                <option>No significant impact</option>
+                            </select>
                         </div>
-                        <select id="impactLife" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Impact on Daily Life *</option>
-                            <option>Yes, unable to work</option>
-                            <option>Yes, limited work / activities</option>
-                            <option>No significant impact</option>
-                        </select>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Are injuries affecting daily life or ability to work?"></i>
                     </div>
                 </div>
                 
@@ -416,43 +599,67 @@
                     <span class="font-semibold text-slate-700">Claim Status</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="attorneyIcon" class="fas fa-gavel text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Attorney Status
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">Has the customer hired an attorney?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="attorneyIcon" class="fas fa-gavel text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="attorneyStatus" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Attorney Status *</option>
+                                <option>No, I do not have an attorney</option>
+                                <option>Yes, I have signed paperwork with an attorney</option>
+                                <option>Yes, I have spoken to an attorney but did not sign</option>
+                                <option>I am in the process of hiring an attorney</option>
+                            </select>
                         </div>
-                        <select id="attorneyStatus" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Attorney Status *</option>
-                            <option>No, I do not have an attorney</option>
-                            <option>Yes, I have signed paperwork with an attorney</option>
-                            <option>Yes, I have spoken to an attorney but did not sign</option>
-                            <option>I am in the process of hiring an attorney</option>
-                        </select>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Has the customer hired an attorney?"></i>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="settlementIcon" class="fas fa-hand-holding-usd text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Settlement Status
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">Has any settlement been paid?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="settlementIcon" class="fas fa-hand-holding-usd text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="settlementStatus" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Settlement Status *</option>
+                                <option>No, I haven't received any payment</option>
+                                <option>Yes, for vehicle/property damage only</option>
+                                <option>Yes, for medical bills or injury compensation</option>
+                                <option>Yes, but only partial payments</option>
+                            </select>
                         </div>
-                        <select id="settlementStatus" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Settlement Status *</option>
-                            <option>No, I haven't received any payment</option>
-                            <option>Yes, for vehicle/property damage only</option>
-                            <option>Yes, for medical bills or injury compensation</option>
-                            <option>Yes, but only partial payments</option>
-                        </select>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Has any settlement been paid?"></i>
                     </div>
-                    <div class="relative">
-                        <div class="absolute left-3 top-3.5">
-                            <i id="releaseIcon" class="fas fa-file-signature text-slate-400 transition-icon"></i>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                            Release Signed
+                            <span class="tooltip-wrapper">
+                                <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                                <span class="tooltip-text tooltip-text-wrap">Did the customer sign a release of liability?</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5">
+                                <i id="releaseIcon" class="fas fa-file-signature text-slate-400 transition-icon"></i>
+                            </div>
+                            <select id="releaseSigned" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                                <option value="">Select Release Status *</option>
+                                <option>No</option>
+                                <option>Yes</option>
+                                <option>Not sure</option>
+                            </select>
                         </div>
-                        <select id="releaseSigned" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                            <option value="">Select Release Status *</option>
-                            <option>No</option>
-                            <option>Yes</option>
-                            <option>Not sure</option>
-                        </select>
-                        <i class="fas fa-question-circle absolute right-3 top-3.5 text-slate-400 tooltip-icon" data-tooltip="Did the customer sign a release of liability?"></i>
                     </div>
                 </div>
             </div>
@@ -465,13 +672,22 @@
                     <input type="checkbox" id="consentCheck" class="w-4 h-4 mt-1 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                     <label id="consentLabel" class="text-sm text-slate-600 font-normal">I confirm that the lead has provided consent for transfer and all information is accurate to the best of my knowledge.</label>
                 </div>
-                <div class="relative">
-                    <div class="absolute left-3 top-3.5">
-                        <i id="agentIcon" class="fas fa-user-tie text-slate-400 transition-icon"></i>
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1">
+                        Agent Name
+                        <span class="tooltip-wrapper">
+                            <i class="fas fa-info-circle text-slate-400 hover:text-blue-500 text-xs"></i>
+                            <span class="tooltip-text">Select your agent ID</span>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-3 top-3.5">
+                            <i id="agentIcon" class="fas fa-user-tie text-slate-400 transition-icon"></i>
+                        </div>
+                        <select id="agentSelect" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
+                            <option value="">Select Agent *</option>
+                        </select>
                     </div>
-                    <select id="agentSelect" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 bg-white">
-                        <option value="">Select Agent *</option>
-                    </select>
                 </div>
                 <button id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all">
                     Submit Vetting Request
@@ -758,6 +974,8 @@
                 qualification: currentCampaign === 'Auto' ? gatherAutoData() : gatherMvaData()
             };
             
+            console.log("Submitting payload:", payload);
+            
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -765,7 +983,16 @@
                     body: JSON.stringify(payload)
                 });
                 
-                const result = await response.json();
+                const text = await response.text();
+                console.log("Response:", text);
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (err) {
+                    console.error("Invalid response:", text);
+                    throw new Error("Server returned invalid response");
+                }
                 
                 if (result.success) {
                     showToast(`✓ Vetting request submitted! ID: ${result.submissionId}`, true);
